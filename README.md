@@ -1,217 +1,105 @@
-## Project Structure
+# BGSBU Hostel Leave Management System
 
-```
-bgsbu-hostel-leave-system/
-├── frontend/
-│   ├── index.html          # Landing page
-│   ├── login.html          # Login page
-│   ├── register.html       # Registration page
-│   ├── admin.html          # Admin dashboard
-│   ├── warden.html         # Warden dashboard
-│   ├── style.css           # Main stylesheet
-│   └── script.js           # Client-side JavaScript
-├── backend/
-│   ├── app.py              # Flask application
-│   └── requirements.txt    # Python dependencies
-├── run_servers.bat         # Windows server runner
-└── README.md               # This file
-```
+A modern, full-stack digital platform designed for Baba Ghulam Shah Badshah University (BGSBU) to simplify the hostel leave application process. This system allows students to apply for leave online while providing wardens and administrators with powerful tools to manage and track requests.
 
-## Features
+## 🚀 Key Features
 
-### 🎓 Student Features
-- User registration and authentication
-- Leave request submission with date selection
-- Request status tracking
-- Emergency contact information
+### 🎓 For Students
+- **Digital Applications:** Apply for leave from anywhere with a few clicks.
+- **Real-time Tracking:** Monitor the status of your leave requests (Pending, Approved, Rejected).
+- **Email Notifications:** Receive instant OTPs for verification and password resets.
+- **Profile Management:** Keep your room and hostel information up to date.
 
-### 👨‍🏫 Warden Features
-- Hostel-specific leave request management
-- Approve/reject leave requests
-- Contact students directly
-- View current leave statuses
-- Quick actions for common tasks
+### 👨‍🏫 For Wardens
+- **Hostel-Specific Dashboard:** Manage requests only for your assigned hostel.
+- **Quick Approvals:** Approve or reject requests with optional remarks.
+- **Live Statistics:** See who is currently on leave and when they are expected back.
+- **Direct Contact:** Access student and parent contact information easily.
 
-### 👨‍💼 Admin Features
-- System-wide student management
-- User account creation and modification
-- System settings configuration
-- Analytics and reporting
-- Bulk operations
+### 👨‍💼 For Administrators
+- **Full System Control:** Manage all hostels, students, and wardens.
+- **Global Analytics:** View system-wide stats and activity logs.
+- **Content Management:** Update "About Us" and contact details dynamically.
+- **Bulk Operations:** Perform mass approvals or data cleaning.
 
-## Technology Stack
+---
+
+## 🛠️ Technology Stack
 
 ### Backend
-- **Python Flask** - Web framework
-- **SQLAlchemy** - Database ORM
-- **SQLite** - Database (easily replaceable with PostgreSQL/MySQL)
-- **Flask-CORS** - Cross-origin resource sharing
+- **Python Flask:** Robust web framework.
+- **MongoDB Atlas:** Scalable NoSQL cloud database.
+- **PyMongo:** For seamless MongoDB integration.
+- **Flask-Mail:** Automated email communication.
+- **Gunicorn:** Production-grade WSGI server.
 
 ### Frontend
-- **HTML5** - Structure
-- **CSS3** - Styling with responsive design
-- **Vanilla JavaScript** - Client-side functionality
-- **Fetch API** - HTTP requests
+- **HTML5 & CSS3:** Responsive, glassmorphic UI design.
+- **Vanilla JavaScript:** Fast and lightweight client-side logic.
+- **Fetch API:** Asynchronous communication with the Flask backend.
 
-## Installation & Setup
+---
 
-### Prerequisites
-- Python 3.8 or higher
-- pip (Python package manager)
+## 📂 Project Structure
 
-### 1. Clone/Download the Project
-```bash
-cd /path/to/your/project
+```text
+├── backend/
+│   ├── app.py              # Main Flask application logic
+│   ├── database.py         # MongoDB connection & schema init
+│   ├── render.yaml         # Render Blueprint configuration
+│   └── requirements.txt    # Python dependencies
+├── frontend/
+│   ├── index.html          # Landing page
+│   ├── student.html        # Student dashboard
+│   ├── warden.html         # Warden dashboard
+│   ├── admin.html          # Admin dashboard
+│   ├── script.js           # Shared frontend logic
+│   └── style.css           # Modern UI styling
+└── .gitignore              # Files to ignore in Git
 ```
 
-### 2. Install Python Dependencies
-```bash
-cd backend
-pip install -r requirements.txt
-cd ..
-```
+---
 
-### 3. Initialize the Database
-The database will be automatically created when you first run the application.
+## ⚙️ Setup & Deployment
 
-### 4. Run the Backend Server
-```bash
-cd backend
-python app.py
-```
-The backend will start on `http://localhost:5000`
+### Local Development
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/FadilSadiqSeh/Hostel-Leave-Management-System.git
+   ```
+2. **Install dependencies:**
+   ```bash
+   cd backend
+   pip install -r requirements.txt
+   ```
+3. **Configure environment:** Create a `.env` file in the `backend` folder with your `MONGO_URI` and email credentials.
+4. **Run the server:**
+   ```bash
+   python app.py
+   ```
 
-### 5. Run the Frontend Server
-In a separate terminal:
-```bash
-cd frontend
-python -m http.server 8000
-```
-The frontend will be available at `http://localhost:8000`
+### Production (Render)
+This project is configured for **Render Blueprint** deployment.
+1. Push this code to GitHub.
+2. In Render, select **New +** > **Blueprint**.
+3. Connect your repository. Render will automatically detect the `backend/render.yaml` and set up your Web Service.
+4. Deploy the `frontend` folder as a **Static Site**.
 
-## Default Accounts
+---
 
-### Admin Account
-- **Username:** admin@bgsbu.edu
-- **Password:** admin123
+## 🔐 Default Credentials
+- **Admin:** `admin@bgsbu.ac.in` / `admin123`
+- **Warden/Student:** Register via the portal and verify via Email OTP.
 
-### Warden Account
-- **Username:** warden@bgsbu.edu
-- **Password:** warden123
+---
 
-## API Endpoints
+## 🛡️ Security Features
+- **OTP Verification:** Mandatory email verification for all new accounts.
+- **CSRF Protection:** Secure state-changing API requests.
+- **Password Hashing:** Industry-standard security using `werkzeug`.
+- **Brute Force Protection:** Automatic account locking after failed attempts.
 
-### Authentication
-- `POST /api/register` - User registration
-- `POST /api/login` - User login
-- `POST /api/logout` - User logout
-- `GET /api/profile` - Get user profile
+---
 
-### Leave Requests
-- `POST /api/leave-requests` - Create leave request
-- `GET /api/leave-requests` - Get leave requests (filtered by role)
-- `PUT /api/leave-requests/<id>` - Update leave request status
-
-### Admin Only
-- `GET /api/students` - Get all students
-- `POST /api/students` - Add new student
-- `PUT /api/students/<id>` - Update student
-- `DELETE /api/students/<id>` - Delete student
-- `GET /api/stats` - Get system statistics
-- `GET /api/settings` - Get system settings
-- `PUT /api/settings` - Update system settings
-
-## Database Schema
-
-### Users Table
-- id (Primary Key)
-- username (Unique)
-- email (Unique)
-- password_hash
-- full_name
-- student_id (Unique, nullable)
-- hostel
-- room_number
-- role (student/warden/admin)
-- created_at
-- is_active
-
-### Leave Requests Table
-- id (Primary Key)
-- student_id (Foreign Key)
-- start_date
-- end_date
-- reason
-- status (pending/approved/rejected)
-- emergency_contact
-- submitted_at
-- reviewed_at
-- reviewed_by (Foreign Key)
-- remarks
-
-### System Settings Table
-- id (Primary Key)
-- setting_key (Unique)
-- setting_value
-- updated_at
-
-## Security Features
-
-- Password hashing with Werkzeug
-- Session-based authentication
-- Role-based access control
-- Input validation and sanitization
-- CORS protection
-- SQL injection prevention
-
-## Development
-
-### Adding New Features
-1. Update the database models in `app.py`
-2. Add new API endpoints
-3. Update the frontend JavaScript to call new endpoints
-4. Update HTML templates as needed
-
-### Database Migrations
-When you modify the database models:
-1. Delete the `hostel_leave_system.db` file
-2. Restart the Flask application (it will recreate the database)
-
-## Production Deployment
-
-### Environment Variables
-Create a `.env` file with:
-```
-SECRET_KEY=your-production-secret-key
-DATABASE_URL=your-database-url
-FLASK_ENV=production
-```
-
-### Database
-Replace SQLite with PostgreSQL/MySQL for production:
-```python
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:password@localhost/dbname'
-```
-
-### Security
-- Change default admin/warden passwords
-- Use HTTPS in production
-- Implement proper session management
-- Add rate limiting
-- Enable CSRF protection
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For support or questions, please contact the development team at BGSBU Rajouri.
+## 📜 License
+This project is developed for BGSBU. All rights reserved.
