@@ -2195,15 +2195,15 @@ async function _loadRegistrationHostels() {
 function navigateTo(sectionId) {
     console.log('[Nav] Navigating to:', sectionId);
     // Hide all sections
-    document.querySelectorAll('.content-section, .admin-section').forEach(s => {
+    document.querySelectorAll('.content-section').forEach(s => {
         s.classList.remove('active-section');
-        if (s.style.display === 'block') s.style.display = 'none';
+        s.style.display = 'none';
     });
     // Show target
     const target = document.getElementById('section-' + sectionId);
     if (target) {
         target.classList.add('active-section');
-        if (target.style.display === 'none') target.style.display = 'block';
+        target.style.display = 'block';
     } else {
         console.warn('[Nav] Section not found:', sectionId);
     }
@@ -3648,44 +3648,68 @@ function initAnalyticsSection(role) {
 // ===================== BOOT =====================
 
 document.addEventListener('DOMContentLoaded', async () => {
-    // Only run redirect if on landing pages, not on dashboard
-    const page = window.location.pathname.split('/').pop() || 'index.html';
-    const authPages = ['index.html', 'login.html', 'register.html', 'student-login.html', 'warden-login.html', 'admin-login.html'];
-    if (authPages.includes(page)) {
-        redirectIfLoggedIn();
+    try {
+        // Only run redirect if on landing pages, not on dashboard
+        const page = window.location.pathname.split('/').pop() || 'index.html';
+        const authPages = ['index.html', 'login.html', 'register.html', 'student-login.html', 'warden-login.html', 'admin-login.html'];
+        if (authPages.includes(page)) {
+            redirectIfLoggedIn();
+        }
+
+        initNavbar();
+        
+        // Wrap individual initializations so one failure doesn't block navigation
+        try { loadDepartments(); } catch (e) { console.error("Error loading departments:", e); }
+        try { loadHostelsForRegistration(); } catch (e) { console.error("Error loading hostels:", e); }
+        
+        await initSidebar();
+        await initUnifiedDashboard(); // New unified entry point
+        initLoginPage();
+        setupGlobalListeners();
+
+        // Legacy inits
+        try { await initAdminDashboard(); } catch (e) { }
+        try { await initWardenDashboard(); } catch (e) { }
+        try { await initStudentDashboard(); } catch (e) { }
+
+        // Wire analytics for each role based on which page we're on
+        if (page === 'admin.html')   initAnalyticsSection('admin');
+        if (page === 'warden.html')  initAnalyticsSection('warden');
+        if (page === 'student.html') initAnalyticsSection('student');
+        if (page === 'index.html' || page === '') loadPublicStats();
+    } catch (err) {
+        console.error("Fatal error during DOMContentLoaded:", err);
     }
-
-    initNavbar();
-    // Fix registration form dropdowns
-    loadDepartments();
-    loadHostelsForRegistration();
-    
-    await initSidebar();
-    await initUnifiedDashboard(); // New unified entry point
-    initLoginPage();
-    setupGlobalListeners();
-
-    // Legacy inits
-    await initAdminDashboard();
-    await initWardenDashboard();
-    await initStudentDashboard();
-
-    // Wire analytics for each role based on which page we're on
-    if (page === 'admin.html')   initAnalyticsSection('admin');
-    if (page === 'warden.html')  initAnalyticsSection('warden');
-    if (page === 'student.html') initAnalyticsSection('student');
-    if (page === 'index.html' || page === '') loadPublicStats();
 });
+
 
 // ===================== REGISTRATION HELPERS =====================
 function loadDepartments() {
     const deptSelectors = ['reg-department', 's-dept'];
     deptSelectors.forEach(id => {
         const el = document.getElementById(id);
-        if (el) {
-            // Keep the first option if it's a placeholder
-            const firstOption = el.options[0];
-            el.innerHTML = '';
+        if (!el) return;
+
+        // If it's an input with a datalist, we populate the datalist instead
+        let targetContainer = el;
+        const listId = el.getAttribute('list');
+        if (listId) {
+            targetContainer = document.getElementById(listId);
+        }
+
+        if (!targetContainer) return;
+
+        // Safe check for options property (only exists on SELECT elements)
+        let firstOption = null;
+        if (el.tagName === 'SELECT' && el.options && el.options.length > 0) {
+            firstOption = el.options[0];
+        }
+
+        // Clear existing content
+        targetContainer.innerHTML = '';
+
+        // Add placeholder for SELECT elements
+        if (el.tagName === 'SELECT') {
             if (firstOption && firstOption.value === "") {
                 el.appendChild(firstOption);
             } else {
@@ -3694,16 +3718,25 @@ function loadDepartments() {
                 opt.textContent = "Select Department";
                 el.appendChild(opt);
             }
-            
-            ALL_DEPARTMENTS.sort().forEach(dept => {
-                const opt = document.createElement('option');
-                opt.value = dept;
-                opt.textContent = dept;
-                el.appendChild(opt);
+        }
+
+        // Populate from ALL_DEPARTMENTS array
+        if (Array.isArray(ALL_DEPARTMENTS)) {
+            // Use spread to avoid mutating original array with .sort()
+            [...ALL_DEPARTMENTS].sort().forEach(dept => {
+                if (dept) {
+                    const opt = document.createElement('option');
+                    // Fix: Use the department string directly, not an array index
+                    // This prevents "undefined" errors if departments are simple strings
+                    opt.value = dept;
+                    opt.textContent = dept;
+                    targetContainer.appendChild(opt);
+                }
             });
         }
     });
 }
+
 
 async function loadHostelsForRegistration() {
     const hostelSelectors = ['reg-hostel', 'reg-warden-hostel', 's-hostel'];
