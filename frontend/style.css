@@ -1732,13 +1732,104 @@ footer {
     color: var(--text-muted);
 }
 
+/* ===================== MOBILE RESPONSIVENESS ===================== */
+@media (max-width: 1024px) {
+    .dash-main {
+        padding: var(--space-6) var(--space-4);
+    }
+    .admin-stats {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
+    /* Navbar */
+    .dash-navbar {
+        padding: 0 var(--space-4);
+        justify-content: space-between;
+    }
+    .logo-text h2 {
+        font-size: 1rem;
+    }
+    .dash-user-name {
+        display: none;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+        box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        transition: transform 0.3s ease;
+    }
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+    
+    /* Main Content */
+    .dash-main, .sidebar.collapsed + .dash-main {
+        margin-left: 0 !important;
+        padding: var(--space-4);
+        padding-top: 100px; /* Account for navbar */
+    }
+    
+    /* Dashboard Cards */
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+    .stat-card {
+        padding: var(--space-4);
+    }
+    
+    /* Forms & Inline Grids */
+    .auth-card [style*="grid-template-columns"], 
+    .card [style*="grid-template-columns"],
+    .settings-grid {
+        grid-template-columns: 1fr !important;
+        gap: 16px !important;
+    }
+    
+    .form-input, select, textarea, input[type="text"], input[type="password"], input[type="email"], input[type="tel"], input[type="date"] {
+        padding: 12px 14px;
+        font-size: 1rem; /* Prevent zoom */
+    }
+    
+    /* Table Responsive Overrides */
+    .students-table th, .students-table td,
+    .data-table th, .data-table td {
+        padding: 12px 16px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+    
+    .card, .auth-card {
+        padding: var(--space-4);
+        margin-bottom: var(--space-6);
+    }
+    
+    .section-page-title h1 {
+        font-size: 1.8rem;
+    }
+    
     .about-section, .contacts-section {
         padding: 60px 5% !important;
     }
     .section-title h2 {
         font-size: 2rem !important;
     }
+}
+
+/* Prevent horizontal scroll globally */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Tables horizontal scrolling */
+.table-container, .students-table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
 }
 
 input::-ms-reveal, input::-ms-clear { display: none; }

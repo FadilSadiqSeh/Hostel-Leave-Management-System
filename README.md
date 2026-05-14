@@ -6,6 +6,7 @@ A modern, full-stack digital platform designed for Baba Ghulam Shah Badshah Univ
 
 ### 🎓 For Students
 - **Digital Applications:** Apply for leave from anywhere with a few clicks.
+- **Dynamic Registration:** Select from a comprehensive list of 50+ departments and live hostel data with manual room number entry.
 - **Real-time Tracking:** Monitor the status of your leave requests (Pending, Approved, Rejected).
 - **Email Notifications:** Receive instant OTPs for verification and password resets.
 - **Profile Management:** Keep your room and hostel information up to date.
@@ -21,6 +22,11 @@ A modern, full-stack digital platform designed for Baba Ghulam Shah Badshah Univ
 - **Global Analytics:** View system-wide stats and activity logs.
 - **Content Management:** Update "About Us" and contact details dynamically.
 - **Bulk Operations:** Perform mass approvals or data cleaning.
+
+### 📱 Responsive Design
+- **Mobile Optimized:** Fully responsive interface that works seamlessly on smartphones, tablets, and desktops.
+- **Premium UI:** Glassmorphic dark theme with smooth transitions and interactive elements.
+- **Simplified Navigation:** Centralized "Access Your Portal" card for quick entry into different roles.
 
 ---
 

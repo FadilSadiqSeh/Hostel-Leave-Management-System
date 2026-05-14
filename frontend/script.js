@@ -4,6 +4,22 @@ const API_URL = isDevServer
     ? `http://${window.location.hostname}:5000`
     : 'https://hostel-leave-management-system-qrt2.onrender.com';
 
+const ALL_DEPARTMENTS = [
+    "B.Tech", "M.Tech", "MCA", "BCA", "Integrated MCA", 
+    "B.Sc. Data Science & Artificial Intelligence", "M.Sc. (IT)", 
+    "M.Sc. Mathematics", "B.Sc. Mathematics", "M.Sc. Physics", 
+    "B.Sc. (Hons) Physics", "Diploma Engineering", "BBA", "MBA", "MBA-HTM", 
+    "M.A. Economics", "B.A. (Hons) Economics", "B.A. (Hons) Arabic", 
+    "M.A. Arabic", "M.A. Islamic Studies", "M.A. Urdu", "B.A. (Hons) Urdu", 
+    "M.A. English", "B.A. (Hons) English", "M.A. Persian", "B.A. (Hons) Persian", 
+    "M.A. Gojri", "B.A. (Hons) Gojri", "M.A. Pahari", "B.A. (Hons) Pahari", 
+    "M.A. Education", "B.A. (Hons) Education", "M.Sc. Environmental Sciences", 
+    "B.Sc. Environmental Sciences", "M.Sc. Biotechnology", "B.Sc. Biotechnology", 
+    "M.Sc. Botany", "B.Sc. Botany", "M.Sc. Zoology", "B.Sc. Zoology", 
+    "M.Sc. Microbiology", "B.A. (Hons) History", "B.A. (Hons) Sociology", 
+    "B.A. (Hons) Political Science & International Relations"
+];
+
 if (window.location.protocol === 'file:') {
     alert("CRITICAL ERROR: You are opening this HTML file directly. The application requires a web server to function properly. Please open " + API_URL + " in your browser instead.");
 }
@@ -451,7 +467,9 @@ async function loadRoomsForHostel(hostelId) {
     const roomSel = document.getElementById('reg-room');
     const roomSpinner = document.getElementById('room-spinner');
     const errSpan = document.getElementById('err-reg-room');
-    if (!roomSel) return;
+    
+    // If it's a text input (manual entry), don't try to load rooms
+    if (!roomSel || roomSel.tagName !== 'SELECT') return;
 
     // Always clear previous rooms and error state first
     roomSel.innerHTML = '';
@@ -2842,54 +2860,11 @@ async function injectRoleSections(role) {
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px;">
                         <div class="form-group"><label>Student ID</label><input type="text" id="s-studentId" required class="form-input"></div>
                         <div class="form-group"><label>Department</label>
-                            <input type="text" id="s-dept" list="dept-list-dash" class="form-input" placeholder="Search department...">
-                            <datalist id="dept-list-dash">
-                                <option value="B.Tech">
-                                <option value="M.Tech">
-                                <option value="MCA">
-                                <option value="BCA">
-                                <option value="Integrated MCA">
-                                <option value="B.Sc. Data Science & Artificial Intelligence">
-                                <option value="M.Sc. (IT)">
-                                <option value="M.Sc. Mathematics">
-                                <option value="B.Sc. Mathematics">
-                                <option value="M.Sc. Physics">
-                                <option value="B.Sc. (Hons) Physics">
-                                <option value="Diploma Engineering">
-                                <option value="BBA">
-                                <option value="MBA">
-                                <option value="MBA-HTM">
-                                <option value="M.A. Economics">
-                                <option value="B.A. (Hons) Economics">
-                                <option value="B.A. (Hons) Arabic">
-                                <option value="M.A. Arabic">
-                                <option value="M.A. Islamic Studies">
-                                <option value="M.A. Urdu">
-                                <option value="B.A. (Hons) Urdu">
-                                <option value="M.A. English">
-                                <option value="B.A. (Hons) English">
-                                <option value="M.A. Persian">
-                                <option value="B.A. (Hons) Persian">
-                                <option value="M.A. Gojri">
-                                <option value="B.A. (Hons) Gojri">
-                                <option value="M.A. Pahari">
-                                <option value="B.A. (Hons) Pahari">
-                                <option value="M.A. Education">
-                                <option value="B.A. (Hons) Education">
-                                <option value="M.Sc. Environmental Sciences">
-                                <option value="B.Sc. Environmental Sciences">
-                                <option value="M.Sc. Biotechnology">
-                                <option value="B.Sc. Biotechnology">
-                                <option value="M.Sc. Botany">
-                                <option value="B.Sc. Botany">
-                                <option value="M.Sc. Zoology">
-                                <option value="B.Sc. Zoology">
-                                <option value="M.Sc. Microbiology">
-                                <option value="B.A. (Hons) History">
-                                <option value="B.A. (Hons) Sociology">
-                                <option value="B.A. (Hons) Political Science & International Relations">
-                            </datalist>
+                            <select id="s-dept" class="form-input">
+                                <option value="">Select Department</option>
+                            </select>
                         </div>
+
                         <div class="form-group"><label>Course</label>
                             <select id="s-course" class="form-input" style="appearance: auto;">
                                 <option value="">Select Course</option>
@@ -3681,6 +3656,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     initNavbar();
+    // Fix registration form dropdowns
+    loadDepartments();
+    loadHostelsForRegistration();
+    
     await initSidebar();
     await initUnifiedDashboard(); // New unified entry point
     initLoginPage();
@@ -3697,3 +3676,57 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (page === 'student.html') initAnalyticsSection('student');
     if (page === 'index.html' || page === '') loadPublicStats();
 });
+
+// ===================== REGISTRATION HELPERS =====================
+function loadDepartments() {
+    const deptSelectors = ['reg-department', 's-dept'];
+    deptSelectors.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            // Keep the first option if it's a placeholder
+            const firstOption = el.options[0];
+            el.innerHTML = '';
+            if (firstOption && firstOption.value === "") {
+                el.appendChild(firstOption);
+            } else {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.textContent = "Select Department";
+                el.appendChild(opt);
+            }
+            
+            ALL_DEPARTMENTS.sort().forEach(dept => {
+                const opt = document.createElement('option');
+                opt.value = dept;
+                opt.textContent = dept;
+                el.appendChild(opt);
+            });
+        }
+    });
+}
+
+async function loadHostelsForRegistration() {
+    const hostelSelectors = ['reg-hostel', 'reg-warden-hostel', 's-hostel'];
+    const containers = hostelSelectors.map(id => document.getElementById(id)).filter(el => el !== null);
+    
+    if (containers.length === 0) return;
+
+    try {
+        const hostels = await apiFetch('/hostels');
+        containers.forEach(el => {
+            const currentVal = el.value;
+            el.innerHTML = '<option value="">Select Hostel</option>';
+            hostels.forEach(h => {
+                const opt = document.createElement('option');
+                opt.value = h.id || h.name; // Prefer ID if available
+                opt.textContent = h.name;
+                el.appendChild(opt);
+            });
+            // Try to restore value if it was set
+            if (currentVal) el.value = currentVal;
+        });
+    } catch (err) {
+        console.error("Failed to load hostels for registration:", err);
+        showMsg("Failed to load hostel list. Please refresh.", "error");
+    }
+}

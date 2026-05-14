@@ -99,13 +99,9 @@
                         </div>
                         <div class="form-group">
                             <label for="reg-department">Department</label>
-                            <div style="position: relative;">
-                                <input type="text" id="reg-department" list="dept-list" class="form-input" placeholder="Search department..." style="padding-right: 35px;">
-                            </div>
-                            <datalist id="dept-list">
-                                <option value="B.Tech"><option value="MCA"><option value="MBA">
-                                <!-- Other options can be appended by script if needed -->
-                            </datalist>
+                            <select id="reg-department" class="form-input" style="appearance: auto;">
+                                <option value="">Select Department</option>
+                            </select>
                             <span class="field-error" id="err-reg-department"></span>
                         </div>
                     </div>
@@ -129,16 +125,14 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                         <div class="form-group">
                             <label for="reg-hostel">Hostel</label>
-                            <select id="reg-hostel" class="form-input" style="appearance: auto;" onchange="loadRoomsForHostel(this.value)">
+                            <select id="reg-hostel" class="form-input" style="appearance: auto;">
                                 <option value="">Select Hostel</option>
                             </select>
                             <span class="field-error" id="err-reg-hostel"></span>
                         </div>
                         <div class="form-group">
                             <label for="reg-room">Room No.</label>
-                            <select id="reg-room" class="form-input" style="appearance: auto;" disabled>
-                                <option value="">Select Hostel First</option>
-                            </select>
+                            <input type="text" id="reg-room" class="form-input" placeholder="e.g. 319">
                             <span class="field-error" id="err-reg-room"></span>
                         </div>
                     </div>
