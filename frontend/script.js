@@ -1,11 +1,11 @@
 // ===================== CONFIG =====================
 const isDevServer = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
-const API = isDevServer 
-    ? `http://${window.location.hostname}:5000/api`
-    : 'REPLACE_WITH_RENDER_BACKEND_URL/api';
+const API_URL = isDevServer 
+    ? `http://${window.location.hostname}:5000`
+    : 'https://hostel-leave-management-system-qrt2.onrender.com';
 
 if (window.location.protocol === 'file:') {
-    alert("CRITICAL ERROR: You are opening this HTML file directly. The application requires a web server to function properly. Please open http://127.0.0.1:5000/ in your browser instead.");
+    alert("CRITICAL ERROR: You are opening this HTML file directly. The application requires a web server to function properly. Please open " + API_URL + " in your browser instead.");
 }
 
 // ===================== HELPERS =====================
@@ -129,7 +129,7 @@ async function apiFetch(path, opts = {}) {
         if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
     }
 
-    const res = await fetch(API + path, {
+    const res = await fetch(`${API_URL}/api${path}`, {
         credentials: 'include',
         headers,
         ...opts
@@ -154,7 +154,7 @@ async function apiFetch(path, opts = {}) {
             }
         }
         const errMsg = data.message || data.error || 'Status ' + res.status;
-        console.error(`[API ERROR] ${opts.method || 'GET'} ${API + path} returned ${res.status}:`, data);
+        console.error(`[API ERROR] ${opts.method || 'GET'} ${API_URL}/api${path} returned ${res.status}:`, data);
         throw new Error(errMsg);
     }
     return data;
@@ -468,7 +468,7 @@ async function loadRoomsForHostel(hostelId) {
     roomSel.innerHTML = '<option value="">Loading rooms\u2026</option>';
     if (roomSpinner) roomSpinner.style.display = 'inline-block';
 
-    const url = `${API}/rooms?hostel_id=${encodeURIComponent(hostelId)}`;
+    const url = `${API_URL}/api/rooms?hostel_id=${encodeURIComponent(hostelId)}`;
     console.log(`[Rooms] Fetching: ${url}`);
 
     try {
@@ -2134,7 +2134,7 @@ async function _loadRegistrationHostels() {
     if (wardenHostelSpinner) wardenHostelSpinner.style.display = 'inline-block';
 
     try {
-        const res = await fetch(`${API}/hostels`, { credentials: 'include' });
+        const res = await fetch(`${API_URL}/api/hostels`, { credentials: 'include' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const hostels = await res.json();
         console.log(`[Hostels] Loaded ${hostels.length} hostels for registration`, hostels);
