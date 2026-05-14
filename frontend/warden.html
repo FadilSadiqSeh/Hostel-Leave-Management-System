@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warden Dashboard - BGSBU Rajouri Hostel Leave System</title>
+  <meta name="description" content="Warden dashboard for BGSBU Rajouri Hostel Leave Management System.">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="dashboard-wrapper">
+
+    <!-- TOP NAVBAR -->
+    <header class="dash-navbar">
+      <button class="sidebar-toggle-btn" id="sidebar-toggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <a href="index.html" class="logo">
+        <div class="logo-box">BG</div>
+        <div class="logo-text">
+          <h2>BGSBU Rajouri</h2><span>Hostel Leave System</span>
+        </div>
+      </a>
+      <div class="dash-navbar-spacer"></div>
+      <div class="dash-user-info">
+        <div class="dash-user-avatar" id="nav-avatar">W</div>
+        <div class="dash-user-name"><span id="nav-username">Warden</span><small>Warden</small></div>
+        <a href="#" class="dash-logout-btn" id="warden-logout-btn"><span>🚪</span><span>Logout</span></a>
+      </div>
+    </header>
+
+    <div class="dash-body" id="dash-body">
+      <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-profile">
+          <div class="sidebar-profile-avatar" id="sb-avatar">W</div>
+          <div class="sidebar-profile-text">
+            <span class="sidebar-profile-name" id="sb-name">Warden</span>
+            <span class="sidebar-profile-role">🏫 Warden</span>
+          </div>
+        </div>
+
+        <!-- Hostel badge -->
+        <div style="padding:10px 14px 12px;border-bottom:1px solid rgba(240,180,41,0.12);">
+          <div
+            style="background:rgba(240,180,41,0.1);border:1px solid rgba(240,180,41,0.2);border-radius:10px;padding:10px 12px;overflow:hidden;">
+            <div style="color:#f0b429;font-size:12px;font-weight:700;" id="sb-hostel-name">Loading...</div>
+            <div style="color:rgba(255,255,255,0.5);font-size:10px;margin-top:3px;">Assigned Hostel</div>
+          </div>
+        </div>
+
+        <div class="sidebar-section-label">Dashboard</div>
+        <nav class="sidebar-nav">
+          <button class="nav-item active" data-section="pending-requests" data-tooltip="Pending Requests">
+            <span class="nav-icon">⏳</span>
+            <span class="nav-label">Pending Requests</span>
+            <span class="nav-badge" id="sb-pending-badge" style="display:none;">0</span>
+          </button>
+          <button class="nav-item" data-section="hostel-students" data-tooltip="Students in Hostel">
+            <span class="nav-icon">👥</span><span class="nav-label">Students in My Hostel</span>
+          </button>
+          <button class="nav-item" data-section="students-on-leave" data-tooltip="Students on Leave">
+            <span class="nav-icon">🏃</span><span class="nav-label">Students on Leave</span>
+          </button>
+          <button class="nav-item" data-section="leave-history" data-tooltip="Leave History">
+            <span class="nav-icon">📋</span><span class="nav-label">Leave History (6 months)</span>
+          </button>
+          <button class="nav-item" data-section="leave-analytics" data-tooltip="Leave Analytics">
+            <span class="nav-icon">📊</span><span class="nav-label">Leave Analytics</span>
+          </button>
+
+
+          <div class="sidebar-section-label" style="padding-left:0;">Tools</div>
+          <button class="nav-item" data-section="quick-actions" data-tooltip="Quick Actions">
+            <span class="nav-icon">⚡</span><span class="nav-label">Quick Actions</span>
+          </button>
+          <button class="nav-item" data-section="recent-activity" data-tooltip="Recent Activity">
+            <span class="nav-icon">🕒</span><span class="nav-label">Recent Activity</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <button class="nav-item" id="sb-logout-btn" data-tooltip="Logout" style="color:#e74c3c;">
+            <span class="nav-icon">🚪</span><span class="nav-label">Logout</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main class="dash-main" id="dash-main">
+
+        <!-- Stats always visible -->
+        <div class="warden-stats" style="margin-bottom:24px;">
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+              <h3 id="hostel-students">0</h3>
+              <p>Students in Hostel</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info">
+              <h3 id="warden-pending">0</h3>
+              <p>Pending Approvals</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-info">
+              <h3 id="current-leaves">0</h3>
+              <p>Currently on Leave</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <h3 id="warden-approved">0</h3>
+              <p>Approved This Week</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- === SECTION: Pending Requests === -->
+        <div class="content-section active-section" id="section-pending-requests">
+          <div class="section-page-title">
+            <h1>⏳ Pending Leave Requests</h1>
+            <p>Review and approve or reject student leave requests from your hostel.</p>
+          </div>
+
+          <div class="admin-section">
+            <div class="section-header">
+              <h2>Pending Requests</h2>
+              <div class="section-actions">
+                <input type="text" id="warden-pending-search" placeholder="Search by name or reason..."
+                  style="padding:8px 12px;border:1px solid #ccc;border-radius:5px;width:200px;">
+                <button class="btn btn-secondary" id="refresh-warden-requests">↻ Refresh</button>
+              </div>
+            </div>
+            <div class="requests-list" id="warden-pending-requests-list">
+              <p style="text-align:center;padding:40px;color:#999">Loading pending requests...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- === SECTION: Students in Hostel === -->
+        <div class="content-section" id="section-hostel-students">
+          <div class="section-page-title">
+            <h1>👥 Students in My Hostel</h1>
+            <p>All students currently assigned to your hostel.</p>
+          </div>
+          <div class="admin-section">
+            <div class="section-header">
+              <h2>Hostel Students</h2>
+            </div>
+            <div class="search-filter">
+              <input type="text" id="warden-student-search" placeholder="Search students by name or ID...">
+            </div>
+            <div class="students-table-container">
+              <table class="students-table" id="warden-students-table">
+                <thead>
+                  <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th>Course</th>
+                    <th>Hostel</th>
+                    <th>Parent's Phone</th>
+                    <th>Room No.</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="warden-students-table-body">
+                  <tr>
+                    <td colspan="7" style="text-align:center;padding:20px;color:#999;">Loading students...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- === SECTION: Students on Leave === -->
+        <div class="content-section" id="section-students-on-leave">
+          <div class="section-page-title">
+            <h1>🏃 Students Currently on Leave</h1>
+            <p>Students from your hostel who are currently on approved leave.</p>
+          </div>
+          <div class="admin-section">
+            <div class="section-header">
+              <h2>Currently on Leave</h2>
+              <div class="section-actions">
+                <input type="text" id="warden-active-search" placeholder="Search by name..."
+                  style="padding:8px 12px;border:1px solid #ccc;border-radius:5px;width:200px;">
+              </div>
+            </div>
+            <div class="current-leaves-list" id="warden-current-leaves-list">
+              <p style="text-align:center;padding:20px;color:#999">No students currently on leave</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- === SECTION: Leave History === -->
+        <div class="content-section" id="section-leave-history">
+          <div class="section-page-title">
+            <h1>📋 Leave History</h1>
+            <p>Complete leave records for your hostel over the last 6 months.</p>
+          </div>
+          <div class="admin-section">
+            <div class="section-header">
+              <h2>Leave History (Last 6 Months)</h2>
+              <div class="section-actions">
+                <button class="btn btn-danger" id="warden-bulk-delete" style="display:none;">Delete Selected</button>
+              </div>
+            </div>
+            <div class="search-filter" style="margin-bottom:20px;display:flex;flex-wrap:wrap;gap:10px;">
+              <input type="text" id="warden-leave-search" placeholder="Search by name or ID..."
+                style="flex:2;min-width:200px;">
+              <select id="warden-leave-status-filter" style="flex:1;min-width:120px;">
+                <option value="all">All Status</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <select id="warden-visibility-filter" style="flex:1;min-width:120px;">
+                <option value="active">Active Records</option>
+                <option value="hidden">Hidden Records</option>
+              </select>
+              <input type="date" id="warden-leave-date-filter" style="flex:1;min-width:150px;">
+            </div>
+            <div class="students-table-container">
+              <table class="students-table">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="warden-select-all-leaves"></th>
+                    <th>Student</th>
+                    <th>Department</th>
+                    <th>Course</th>
+                    <th>Hostel</th>
+                    <th>Room</th>
+                    <th>Duration</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Approved By</th>
+                    <th>Reviewed At</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="warden-history-body">
+                  <tr>
+                    <td colspan="12" style="text-align:center;padding:20px;color:var(--text-muted);">Loading history...
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- === SECTION: Leave Analytics === -->
+        <div class="content-section" id="section-leave-analytics">
+          <div class="section-page-title">
+            <h1>📊 Leave Analytics</h1>
+            <p>Search and analyze leave records for students in your hostel over 1 to 6 months.</p>
+          </div>
+          <div class="admin-section">
+            <!-- Analytics Controls -->
+            <div class="analytics-controls">
+              <div class="analytics-period-group">
+                <label style="font-weight:600;color:var(--text-main);margin-bottom:8px;display:block;">Select Period</label>
+                <div class="period-pills" id="warden-period-pills">
+                  <button class="period-pill active" data-months="1">1 Month</button>
+                  <button class="period-pill" data-months="2">2 Months</button>
+                  <button class="period-pill" data-months="3">3 Months</button>
+                  <button class="period-pill" data-months="4">4 Months</button>
+                  <button class="period-pill" data-months="5">5 Months</button>
+                  <button class="period-pill" data-months="6">6 Months</button>
+                </div>
+              </div>
+              <div class="analytics-search-group">
+                <label style="font-weight:600;color:var(--text-main);margin-bottom:8px;display:block;">Search Student</label>
+                <div style="display:flex;gap:10px;align-items:center;">
+                  <input type="text" id="warden-analytics-search" class="form-input" placeholder="Search by name or student ID..." style="flex:1;min-width:220px;">
+                  <button class="btn btn-primary" id="warden-analytics-search-btn">🔍 Search</button>
+                  <button class="btn btn-secondary" id="warden-analytics-clear-btn">✕ Clear</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="analytics-summary-strip" id="warden-analytics-summary" style="display:none;">
+              <div class="analytics-summary-card">
+                <div class="asm-icon">👥</div>
+                <div class="asm-info">
+                  <div class="asm-value" id="warden-asm-students">0</div>
+                  <div class="asm-label">Students Found</div>
+                </div>
+              </div>
+              <div class="analytics-summary-card">
+                <div class="asm-icon">📋</div>
+                <div class="asm-info">
+                  <div class="asm-value" id="warden-asm-leaves">0</div>
+                  <div class="asm-label">Total Leaves</div>
+                </div>
+              </div>
+              <div class="analytics-summary-card">
+                <div class="asm-icon">📅</div>
+                <div class="asm-info">
+                  <div class="asm-value" id="warden-asm-days">0</div>
+                  <div class="asm-label">Total Days Away</div>
+                </div>
+              </div>
+              <div class="analytics-summary-card">
+                <div class="asm-icon">📆</div>
+                <div class="asm-info">
+                  <div class="asm-value" id="warden-asm-period">—</div>
+                  <div class="asm-label">Period</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Results -->
+            <div id="warden-analytics-results">
+              <div class="analytics-empty-state">
+                <div style="font-size:3rem;margin-bottom:12px;">📊</div>
+                <p style="color:var(--text-muted);font-size:1rem;">Select a period and click Search to view leave analytics.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- === SECTION: Quick Actions === -->
+        <div class="content-section" id="section-quick-actions">
+          <div class="section-page-title">
+            <h1>⚡ Quick Actions</h1>
+            <p>Perform common warden tasks with a single click.</p>
+          </div>
+          <div class="admin-section">
+            <div class="section-header">
+              <h2>Quick Actions</h2>
+            </div>
+            <div class="quick-actions-grid">
+              <button class="quick-action-btn" id="bulk-approve">
+                <div class="action-icon">✅</div>
+                <div class="action-text">
+                  <h4>Bulk Approve</h4>
+                  <p>Approve multiple requests</p>
+                </div>
+              </button>
+              <button class="quick-action-btn" id="emergency-leave">
+                <div class="action-icon">🚨</div>
+                <div class="action-text">
+                  <h4>Emergency Leave</h4>
+                  <p>Grant immediate leave</p>
+                </div>
+              </button>
+              <button class="quick-action-btn" id="extend-leave">
+                <div class="action-icon">📅</div>
+                <div class="action-text">
+                  <h4>Extend Leave</h4>
+                  <p>Modify existing leave</p>
+                </div>
+              </button>
+              <button class="quick-action-btn" id="contact-student">
+                <div class="action-icon">📞</div>
+                <div class="action-text">
+                  <h4>Contact Student</h4>
+                  <p>Reach out directly</p>
+                </div>
+              </button>
+              <button class="quick-action-btn" id="leave-history-btn">
+                <div class="action-icon">📊</div>
+                <div class="action-text">
+                  <h4>Leave History</h4>
+                  <p>View past records</p>
+                </div>
+              </button>
+
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- === SECTION: Recent Activity === -->
+        <div class="content-section" id="section-recent-activity">
+          <div class="section-page-title">
+            <h1>🕒 Recent Activity</h1>
+            <p>Latest actions and events in your hostel.</p>
+          </div>
+          <div class="admin-section">
+            <div class="section-header">
+              <h2>Activity Log</h2>
+              <button class="btn btn-secondary" id="view-full-log">View Full Log</button>
+            </div>
+            <div class="activity-log" id="warden-activity-log">
+              <p style="text-align:center;padding:20px;color:#999">No recent activity</p>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Contact Modal -->
+  <div id="contact-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Contact Student</h3>
+        <span class="modal-close" data-modal="contact-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div id="contact-student-info"></div>
+        <form id="contact-form" onsubmit="event.preventDefault()">
+          <div class="form-group">
+            <label for="contact-method">Contact Method</label>
+            <select id="contact-method" required>
+              <option value="call">Phone Call</option>
+              <option value="message">SMS Message</option>
+              <option value="email">Email</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="contact-message">Message</label>
+            <textarea id="contact-message" rows="4" placeholder="Enter your message..." required></textarea>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary" id="cancel-contact">Cancel</button>
+            <button type="submit" class="btn btn-primary">Send Message</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Approve Modal -->
+  <div id="bulk-approve-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Bulk Approve Requests</h3>
+        <span class="modal-close" data-modal="bulk-approve-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p>Select the requests you want to approve:</p>
+        <div id="bulk-requests-list"></div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-bulk">Cancel</button>
+          <button type="button" class="btn btn-primary" id="confirm-bulk-approve">Approve Selected</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEAVE DETAILS MODAL -->
+  <div id="leave-details-modal" class="modal">
+    <div class="modal-content" style="max-width:600px;">
+      <div class="modal-header">
+        <h3>Leave Request Details</h3>
+        <span class="modal-close" data-modal="leave-details-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <div class="modal-detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Student Name</span>
+            <span class="detail-value" id="detail-student-name"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Student ID</span>
+            <span class="detail-value" id="detail-id"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Hostel & Room</span>
+            <span class="detail-value" id="detail-room"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span id="detail-status"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">From Date</span>
+            <span class="detail-value" id="detail-start"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">To Date</span>
+            <span class="detail-value" id="detail-end"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Emergency Contact</span>
+            <span class="detail-value" id="detail-emergency"></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Parent Contact</span>
+            <span class="detail-value" id="detail-parent"></span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <div class="detail-section-title">
+            <span>📝</span> Reason for Leave
+          </div>
+          <div id="detail-reason" class="detail-text-box"></div>
+        </div>
+
+        <div>
+          <div class="detail-section-title">
+            <span>💬</span> Warden Remarks
+          </div>
+          <div id="detail-remarks" class="detail-text-box"></div>
+        </div>
+        <div class="modal-actions" style="margin-top:20px;">
+          <button type="button" class="btn btn-secondary modal-cancel" data-modal="leave-details-modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student Edit Modal -->
+  <div id="student-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="student-modal-title">Edit Student</h3>
+        <span class="modal-close" data-modal="student-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="student-form">
+          <input type="hidden" id="student-edit-id">
+          <div class="form-row">
+            <div class="form-group"><label for="s-name">Full Name</label><input type="text" id="s-name"
+                placeholder="e.g. John Doe" required></div>
+            <div class="form-group"><label for="s-student-id">Student ID</label><input type="text" id="s-student-id"
+                placeholder="e.g. 20240001" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="s-email">Email</label><input type="email" id="s-email"
+                placeholder="student@example.com" required></div>
+            <div class="form-group"><label for="s-room">Room Number</label><input type="text" id="s-room"
+                placeholder="e.g. 101" required></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="s-dept">Department</label>
+              <input type="text" id="s-dept" list="dept-list-warden" placeholder="Select or type department">
+              <datalist id="dept-list-warden">
+                <option value="B.Tech">
+                <option value="M.Tech">
+                <option value="MCA">
+                <option value="BCA">
+                <option value="Integrated MCA">
+                <option value="B.Sc. Data Science &amp; Artificial Intelligence">
+                <option value="M.Sc. (IT)">
+                <option value="M.Sc. Mathematics">
+                <option value="B.Sc. Mathematics">
+                <option value="M.Sc. Physics">
+                <option value="B.Sc. (Hons) Physics">
+                <option value="BBA">
+                <option value="MBA">
+                <option value="MBA-HTM">
+                <option value="M.A. Economics">
+                <option value="B.A. (Hons) Economics">
+                <option value="M.A. Arabic">
+                <option value="B.A. (Hons) Arabic">
+                <option value="M.A. Islamic Studies">
+                <option value="M.A. Urdu">
+                <option value="B.A. (Hons) Urdu">
+                <option value="M.A. English">
+                <option value="B.A. (Hons) English">
+                <option value="M.A. Education">
+                <option value="B.A. (Hons) Education">
+                <option value="M.Sc. Biotechnology">
+                <option value="B.Sc. Biotechnology">
+                <option value="M.Sc. Botany">
+                <option value="B.Sc. Botany">
+                <option value="M.Sc. Zoology">
+                <option value="B.Sc. Zoology">
+                <option value="B.A. (Hons) History">
+                <option value="B.A. (Hons) Sociology">
+              </datalist>
+            </div>
+            <div class="form-group">
+              <label for="s-course">Course</label>
+              <select id="s-course"
+                style="appearance: auto; width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
+                <option value="">Select Course</option>
+                <option value="UG">UG</option>
+                <option value="PG">PG</option>
+                <option value="P.hd">P.hd</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label for="s-hostel">Hostel</label><select id="s-hostel" required>
+                <option value="">Select Hostel</option>
+              </select></div>
+            <div class="form-group">
+              <label for="s-warden">Assigned Warden</label>
+              <select id="s-warden" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px;">
+                <option value="">Select Warden</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="s-parent-phone">Parent Phone Number</label>
+              <input type="tel" id="s-parent-phone" placeholder="e.g. 6006451724" maxlength="10" pattern="\d{10}">
+              <small style="color:#666;font-size:11px;">10-digit mobile number</small>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn-secondary modal-cancel" data-modal="student-modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="student-submit-btn">Update Student</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js?v=10"></script>
+</body>
+
+</html>

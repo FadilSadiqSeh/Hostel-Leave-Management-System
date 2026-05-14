@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | BGSBU Hostel Leave Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- TOP NAVBAR -->
+        <header class="dash-navbar">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <button class="sidebar-toggle-btn" id="sidebar-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="logo-text" style="display: flex; flex-direction: column;">
+                    <h2 style="font-size: 1.1rem; line-height: 1;">BGSBU Rajouri</h2>
+                    <span
+                        style="font-size: 0.7rem; color: var(--slate-500); text-transform: uppercase; font-weight: 600;">Hostel
+                        Leave System</span>
+                </div>
+            </div>
+
+            <div class="dash-user-info" style="display: flex; align-items: center; gap: 15px;">
+                <div style="text-align: right; line-height: 1.2;" class="hidden-mobile">
+                    <div id="nav-username" style="font-weight: 700; font-size: 0.9rem;">Loading...</div>
+                    <small id="nav-role"
+                        style="color: var(--slate-500); font-weight: 600; text-transform: uppercase; font-size: 0.65rem;">...</small>
+                </div>
+                <div class="sidebar-profile-avatar" id="nav-avatar" style="cursor: pointer;">?</div>
+            </div>
+        </header>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-profile">
+                <div class="sidebar-profile-avatar" id="sb-avatar-large">?</div>
+                <div class="sidebar-profile-text">
+                    <span class="sidebar-profile-name" id="sb-name">User Name</span>
+                    <span class="sidebar-profile-role" id="sb-role">Role</span>
+                </div>
+            </div>
+
+            <div id="sidebar-nav-container" style="flex-grow: 1;">
+                <!-- Nav items injected by JS -->
+            </div>
+
+            <div class="sidebar-bottom">
+                <button class="nav-item" id="sb-logout-btn" style="color: var(--danger);">
+                    <span class="nav-icon">🚪</span>
+                    <span class="nav-label">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="dash-main" id="dash-main">
+            <!-- Dynamic Header -->
+            <div class="section-page-title" style="margin-bottom: 30px;">
+                <h1 id="welcome-title" style="font-size: 1.75rem; margin-bottom: 5px;">Dashboard</h1>
+                <p id="welcome-subtitle" style="color: var(--slate-500);">Welcome back to your hostel management portal.
+                </p>
+            </div>
+
+            <!-- Stats Container -->
+            <div class="admin-stats" id="stats-cards-container">
+                <!-- Dynamic Stats Cards -->
+            </div>
+
+            <!-- SPA Content Container -->
+            <div id="content-sections-container">
+                <!-- Sections injected by JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modal-container"></div>
+
+    <!-- Loading Overlay -->
+    <div id="dashboard-loading"
+        style="position: fixed; inset: 0; background: #1b1919; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s;">
+        <div class="sidebar-profile-avatar" style="width: 80px; height: 80px; font-size: 2rem; margin-bottom: 20px;">BG
+        </div>
+        <div style="font-weight: 700; color: var(--slate-800); letter-spacing: 1px;">INITIALIZING SECURE DASHBOARD...
+        </div>
+        <div
+            style="width: 200px; height: 4px; background: var(--slate-100); border-radius: 10px; margin-top: 20px; overflow: hidden;">
+            <div id="loading-bar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s;">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Smooth loading progress
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += Math.random() * 20;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+            }
+            document.getElementById('loading-bar').style.width = progress + '%';
+        }, 150);
+    </script>
+</body>
+
+</html>

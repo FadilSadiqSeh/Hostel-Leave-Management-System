@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warden Portal - BGSBU Rajouri</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="warden-portal-bg">
+
+    <!-- ================= NAVBAR ================= -->
+    <header class="navbar">
+        <div class="logo">
+            <div class="logo-box" style="background: var(--warning);">BG</div>
+            <div class="logo-text">
+                <h2>BGSBU Rajouri</h2>
+                <span>WARDEN PORTAL</span>
+            </div>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="warden-login.html" class="active">Warden Login</a>
+        </nav>
+    </header>
+
+    <!-- ================= AUTH CONTAINER ================= -->
+    <section class="auth-container">
+
+        <!-- ===== SIGN IN ===== -->
+        <div class="auth-card" id="login-container">
+            <div class="auth-header">
+                <h1>Warden Portal</h1>
+                <p>Log in with your assigned Email</p>
+            </div>
+
+            <form id="login-form" onsubmit="event.preventDefault(); handleLogin(event);">
+                <input type="hidden" id="login-role" value="warden">
+                
+                <div class="form-group">
+                    <label for="username">Email Address</label>
+                    <input type="email" id="username" name="username" class="form-input" placeholder="warden@bgsbu.ac.in" required>
+                </div>
+
+                <div class="form-group relative">
+                    <label for="password">Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="password" name="password" class="form-input" placeholder="••••••••" required style="padding-right: 40px;">
+                        <span class="password-toggle" onclick="togglePasswordVisibility('password')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--slate-400);">👁️</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; font-size: 0.875rem;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" name="remember" style="width: 16px; height: 16px; accent-color: var(--primary);">
+                        Remember me
+                    </label>
+                    <a href="#" style="color: var(--primary); font-weight: 600; text-decoration: none;" onclick="toggleForm('forgot-password-container')">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="background: var(--warning);">Sign In to Dashboard</button>
+
+                <p style="text-align: center; margin-top: 24px; font-size: 0.875rem; color: var(--slate-500);">
+                    New Warden? <a href="#" style="color: var(--primary); font-weight: 700; text-decoration: none;" onclick="toggleForm('register-container')">Register here</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- ===== SIGN UP ===== -->
+        <div class="auth-card" id="register-container" style="display: none; max-width: 560px;">
+            <div class="auth-header">
+                <h1>Warden Registration</h1>
+                <p>Register to manage your assigned hostel</p>
+            </div>
+
+            <form id="register-form" onsubmit="event.preventDefault(); handleRegister(event);">
+                <input type="hidden" id="reg-role" value="warden">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label for="reg-name">Full Name</label>
+                        <input type="text" id="reg-name" class="form-input" placeholder="Enter name">
+                        <span class="field-error" id="err-reg-name"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">Email Address</label>
+                        <input type="email" id="reg-email" class="form-input" placeholder="you@bgsbu.ac.in">
+                        <span class="field-error" id="err-reg-email"></span>
+                    </div>
+                </div>
+
+                <div id="warden-reg-fields">
+                    <div class="form-group">
+                        <label for="reg-warden-hostel">Hostel Assignment</label>
+                        <select id="reg-warden-hostel" class="form-input" style="appearance: auto;">
+                            <option value="">Select Hostel</option>
+                        </select>
+                        <span class="field-error" id="err-reg-warden-hostel"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-warden-phone">Contact Number</label>
+                        <input type="tel" id="reg-warden-phone" class="form-input" placeholder="10-digit number">
+                        <span class="field-error" id="err-reg-warden-phone"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="reg-password">Security Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="reg-password" class="form-input" placeholder="Min. 6 characters">
+                        <span class="password-toggle" onclick="togglePasswordVisibility('reg-password')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--slate-400);">👁️</span>
+                    </div>
+                    <span class="field-error" id="err-reg-password"></span>
+                </div>
+
+                <div id="reg-success-banner" style="display: none; align-items: center; gap: 12px; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--success); padding: 12px; border-radius: 8px; margin-bottom: 20px; color: var(--success); font-weight: 500;">
+                    <span id="reg-success-msg"></span>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="reg-submit-btn" style="background: var(--warning);">Register Account</button>
+
+                <p style="text-align: center; margin-top: 24px; font-size: 0.875rem; color: var(--slate-500);">
+                    Already registered? <a href="#" style="color: var(--primary); font-weight: 700; text-decoration: none;" onclick="toggleForm('login-container')">Sign In</a>
+                </p>
+            </form>
+        </div>
+
+        <!-- ===== FORGOT PASSWORD & OTP ===== -->
+        <div class="auth-card" id="forgot-password-container" style="display: none;">
+            <div class="auth-header">
+                <h1>Reset Password</h1>
+                <p>We'll send a code to your email</p>
+            </div>
+            <form id="forgot-password-form" onsubmit="event.preventDefault(); handleForgotPassword(event);">
+                <div class="form-group">
+                    <label for="forgot-email">Email Address</label>
+                    <input type="email" id="forgot-email" class="form-input" placeholder="you@bgsbu.ac.in" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="background: var(--warning);">Send Reset Code</button>
+                <p style="text-align: center; margin-top: 24px; font-size: 0.875rem; color: var(--slate-500);">
+                    Remembered it? <a href="#" style="color: var(--primary); font-weight: 700; text-decoration: none;" onclick="toggleForm('login-container')">Back to Sign In</a>
+                </p>
+            </form>
+        </div>
+
+        <div class="auth-card" id="otp-container" style="display: none;">
+            <div class="auth-header">
+                <h1>Verify Code</h1>
+                <p id="otp-message">Enter the 6-digit code sent to your email</p>
+            </div>
+            <form id="otp-form" onsubmit="event.preventDefault(); handleVerifyOTP(event);">
+                <input type="hidden" id="otp-email-hidden">
+                <input type="hidden" id="otp-context" value="verify">
+                <div class="form-group">
+                    <label for="otp-code">Verification Code</label>
+                    <input type="text" id="otp-code" class="form-input" maxlength="6" required style="letter-spacing: 12px; font-size: 1.5rem; text-align: center; font-weight: 700;">
+                </div>
+                <div class="form-group" id="reset-password-group" style="display: none;">
+                    <label for="reset-new-password">New Security Password</label>
+                    <div style="position: relative;">
+                        <input type="password" id="reset-new-password" class="form-input" placeholder="Enter new password">
+                        <span class="password-toggle" onclick="togglePasswordVisibility('reset-new-password')" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--slate-400);">👁️</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" id="otp-submit-btn" style="background: var(--warning);">Verify Account</button>
+                <div style="text-align: center; margin-top: 24px; font-size: 0.875rem; color: var(--slate-500);">
+                    <p>Didn't receive code? <a href="#" style="color: var(--primary); font-weight: 700; text-decoration: none;" onclick="handleResendOTP()">Resend Now</a></p>
+                    <p style="margin-top: 12px;"><a href="#" style="color: var(--slate-400); text-decoration: none;" onclick="toggleForm('login-container')">← Back to Login</a></p>
+                </div>
+            </form>
+        </div>
+
+    </section>
+
+    <script src="script.js?v=10"></script>
+    <script>
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        }
+        
+    </script>
+</body>
+</html>
