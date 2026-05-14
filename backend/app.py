@@ -442,6 +442,7 @@ def login():
     session.permanent = True
     session['user_id'] = str(user['_id'])
     session['role'] = user['role']
+    session['user_name'] = user['full_name']
     
     log_activity(str(user['_id']), 'login')
     
